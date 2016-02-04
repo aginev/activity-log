@@ -1,0 +1,21 @@
+{
+    "name": "aginev/activity-log",
+    "description": "Track user activities in Laravel 5 applications",
+	  "keywords": ["activity log", "track user activity for Laravel 5", "Laravel 5 activity log"],
+    "homepage": "http://aginev.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Atanas Ginev",
+            "email": "naskospam@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Aginev\\ActivityLog\\" : "src"
+        }
+    },
+    "require": {
+        
+    }
+}
