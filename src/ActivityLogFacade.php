@@ -13,6 +13,6 @@ class ActivityLogFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'Aginev\ActivityLog';
+        return 'Aginev\ActivityLog';//
     }
 }
