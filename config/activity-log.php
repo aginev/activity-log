@@ -2,11 +2,12 @@
 
 return [
     /**
-     * Array of events that needs to be tracked
+     * Where to store logs
+     *
+     * \Aginev\ActivityLog\Handlers\EloquentHandler::class - In database
+     * \Aginev\ActivityLog\Handlers\LogHandler::class      - In laravel log files
      */
-    'events' => [
-
-    ],
+    'log'                   => \Aginev\ActivityLog\Handlers\EloquentHandler::class,
 
     /**
      * Number of latest logs to be returned
