@@ -27,7 +27,7 @@ class ActivityLogServiceProvider extends ServiceProvider
         $this->registerHandlerBinding();
 
         $this->app->bind('Aginev\ActivityLog', function ($app) {
-            return $app->make(Handlers\ActivityLogInterface::class);
+            return $this->app->make('Aginev\ActivityLog\Handlers\LogActivityInterface');
         });
 
         // register aliases
