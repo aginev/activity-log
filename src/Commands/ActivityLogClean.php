@@ -12,14 +12,14 @@ class ActivityLogClean extends Command
      *
      * @var string
      */
-    protected $signature = 'login-activity:clean {days?}';
+    protected $signature = 'activity-log:clean {days?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Clean older login activity logs';
+    protected $description = 'Clean older activity logs';
 
     /**
      * Create a new command instance.
@@ -41,6 +41,6 @@ class ActivityLogClean extends Command
 
         ActivityLogFacade::cleanLog($days);
 
-        $this->info('Older login activity logs cleaned!');
+        $this->info('Older activity logs cleaned!');
     }
 }
