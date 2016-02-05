@@ -50,6 +50,24 @@ protected $commands = [
 
 ## Usage
 
+To subscribe model for activity log just use \Aginev\ActivityLog\Traits\ObservableModel
+```php
+use \Aginev\ActivityLog\Traits\ObservableModel;
+```
+
+To add custom activity description overwrite activityDescription method in your model
+```php
+/**
+ * Implement this method to set custom activity description message
+ * @param $event Event name
+ * @param User $user Current logged in user
+ * @return string
+ */
+public function activityDescription($event, User $user = null) {
+    return 'User ' . $this->full_name . ' has been ' . $event . ' from ' . $user->full_name;
+}
+```
+
 Get activities
 ```php
 $logs = \ActivityLog::getActivities()->get(); // Get all activities
