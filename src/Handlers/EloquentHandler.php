@@ -6,41 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Aginev\ActivityLog\Models\UserActivity;
 
-class EloquentHandler implements ActivityLogInterface
+class EloquentHandler extends HandlerAbstract
 {
-
-    /**
-     * Triggered when model is created
-     *
-     * @param $model
-     * @return mixed
-     */
-    public function created($model)
-    {
-        $this->log($model, __FUNCTION__);
-    }
-
-    /**
-     * Triggered when model is updated
-     *
-     * @param $model
-     * @return mixed
-     */
-    public function updated($model)
-    {
-        $this->log($model, __FUNCTION__);
-    }
-
-    /**
-     * Triggered when model is deleted
-     *
-     * @param $model
-     * @return mixed
-     */
-    public function deleted($model)
-    {
-        $this->log($model, __FUNCTION__);
-    }
 
     /**
      * Clean old logs.
@@ -51,7 +18,11 @@ class EloquentHandler implements ActivityLogInterface
      */
     public function cleanLog($offset)
     {
-        // TODO: Implement cleanLog() method.
+        $past = Carbon::now()->subDays($offset);
+
+        UserActivity::where('created_at', '<=', $past)->delete();
+
+        return true;
     }
 
     /**
@@ -61,7 +32,7 @@ class EloquentHandler implements ActivityLogInterface
      */
     public function getActivities()
     {
-        // TODO: Implement getActivities() method.
+        return UserActivity::orderBy('id', 'decs');
     }
 
     /**
@@ -72,25 +43,14 @@ class EloquentHandler implements ActivityLogInterface
      */
     public function getLatestActivities($limit = null)
     {
-        // TODO: Implement getLatestActivities() method.
+        return UserActivity::orderBy('id', 'decs')->take($this->getLimit($limit))->get();
     }
 
     /**
-     * Setup logs query limit
-     *
-     * @param null $limit
-     * @return mixed|null
+     * @param $model
+     * @param $event
      */
-    protected function setLimit($limit = null)
-    {
-        if (!$limit) {
-            $limit = config('login-activity.number_of_getLatest_logs', 100);
-        }
-
-        return $limit;
-    }
-
-    private function log($model, $event)
+    protected function log($model, $event)
     {
         $attributes = $model->getAttributes();
         $original = $model->getOriginal();
@@ -99,8 +59,8 @@ class EloquentHandler implements ActivityLogInterface
             'user_id'     => Auth::user() ? Auth::user()->id : null,
             'ip_address'  => Request::ip(),
             'event'       => $event,
-            'before'      => $attributes ? json_encode($attributes) : null,
-            'after'       => $original ? json_encode($original) : null,
+            'before'      => $event == 'deleted' ? json_encode($attributes) : json_encode(array_diff_assoc($original, $attributes)),
+            'after'       => json_encode(array_diff_assoc($attributes, $original)),
             'description' => $model->activityDescription($event, Auth::user() ? Auth::user() : null),
         ]);
 

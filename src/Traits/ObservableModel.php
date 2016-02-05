@@ -3,13 +3,14 @@
 namespace Aginev\ActivityLog\Traits;
 
 use Aginev\ActivityLog\Models\UserActivity;
+use App\User;
 
 trait ObservableModel {
 
 	protected static function boot() {
 		parent::boot();
 
-		self::observe(app()->make('Aginev\ActivityLog\Handlers\LogActivityInterface'));
+		self::observe(app()['Aginev\ActivityLog\Handlers\LogActivityInterface']);
 	}
 
     /**
@@ -22,10 +23,11 @@ trait ObservableModel {
 
     /**
      * Implement this method to set custom activity description message
+     * @param $event
+     * @param User $user
+     * @return string
      */
-    public function activityDescription($event, $user) {
-        $description = '';
-
-        return $description;
+    public function activityDescription($event, User $user = null) {
+        return '';
     }
 }
