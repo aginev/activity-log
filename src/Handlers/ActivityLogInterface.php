@@ -9,20 +9,28 @@ interface ActivityLogInterface
 {
 
     /**
-     * Log login event
+     * Triggered when model is created
      *
-     * @param Login $login
+     * @param $model
      * @return mixed
      */
-    public function login(Login $login);
+    public function created($model);
 
     /**
-     * Log logout event
+     * Triggered when model is updated
      *
-     * @param Logout $logout
+     * @param $model
      * @return mixed
      */
-    public function logout(Logout $logout);
+    public function updated($model);
+
+    /**
+     * Triggered when model is deleted
+     *
+     * @param $model
+     * @return mixed
+     */
+    public function deleted($model);
 
     /**
      * Clean old logs.
@@ -38,7 +46,7 @@ interface ActivityLogInterface
      *
      * @return mixed
      */
-    public function getLogs();
+    public function getActivities();
 
     /**
      * Get getLatest logs
@@ -46,35 +54,5 @@ interface ActivityLogInterface
      * @param null $limit
      * @return mixed
      */
-    public function getLatestLogs($limit = null);
-
-    /**
-     * Get login logs
-     *
-     * @return mixed
-     */
-    public function getLoginLogs();
-
-    /**
-     * Get getLatest login logs
-     *
-     * @param null $limit
-     * @return mixed
-     */
-    public function getLatestLoginLogs($limit = null);
-
-    /**
-     * Get logout logs
-     *
-     * @return mixed
-     */
-    public function getLogoutLogs();
-
-    /**
-     * Get getLatest logout logs
-     *
-     * @param null $limit
-     * @return mixed
-     */
-    public function getLatestLogoutLogs($limit = null);
+    public function getLatestActivities($limit = null);
 }

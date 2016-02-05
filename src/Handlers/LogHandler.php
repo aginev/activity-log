@@ -2,35 +2,40 @@
 
 namespace Aginev\ActivityLog\Handlers;
 
-use Aginev\ActivityLog\Exceptions\ActivityLogException;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Log;
-
 class LogHandler implements ActivityLogInterface
 {
 
     /**
-     * Log login event
+     * Triggered when model is created
      *
-     * @param Login $login
+     * @param $model
      * @return mixed
      */
-    public function login(Login $login)
+    public function created($model)
     {
-        $this->createActivity($login->user, __FUNCTION__);
+        // TODO: Implement created() method.
     }
 
     /**
-     * Log logout event
+     * Triggered when model is updated
      *
-     * @param Logout $logout
+     * @param $model
      * @return mixed
      */
-    public function logout(Logout $logout)
+    public function updated($model)
     {
-        $this->createActivity($logout->user, __FUNCTION__);
+        // TODO: Implement updated() method.
+    }
+
+    /**
+     * Triggered when model is deleted
+     *
+     * @param $model
+     * @return mixed
+     */
+    public function deleted($model)
+    {
+        // TODO: Implement deleted() method.
     }
 
     /**
@@ -40,86 +45,44 @@ class LogHandler implements ActivityLogInterface
      *
      * @return bool
      */
-    public function cleanLog($offset = 30)
+    public function cleanLog($offset)
     {
-        // This handler is not able to clean logs
-
-        return true;
-    }
-
-    /**
-     * Create user login activity
-     *
-     * @param Authenticatable $user
-     * @param $event_name
-     * @return bool
-     */
-    protected function createActivity($user, $event_name)
-    {
-        if (!$user) {
-            return false;
-        }
-
-        Log::info('[' . strtoupper($event_name) . '] User #' . $user->id, $user->toArray());
-
-        return true;
+        // TODO: Implement cleanLog() method.
     }
 
     /**
      * Get all logs
-     * @throws ActivityLogException
+     *
+     * @return mixed
      */
-    public function getLogs() {
-        throw new ActivityLogException('Not able to get logs from file');
+    public function getActivities()
+    {
+        // TODO: Implement getActivities() method.
     }
 
     /**
      * Get getLatest logs
      *
      * @param null $limit
-     * @return mixed|void
-     * @throws ActivityLogException
+     * @return mixed
      */
-    public function getLatestLogs($limit = null) {
-        throw new ActivityLogException('Not able to get logs from file');
-    }
-
-
-    /**
-     * Get login logs
-     * @throws ActivityLogException
-     */
-    public function getLoginLogs() {
-        throw new ActivityLogException('Not able to get logs from file');
+    public function getLatestActivities($limit = null)
+    {
+        // TODO: Implement getLatestActivities() method.
     }
 
     /**
-     * Get getLatest login logs
+     * Setup logs query limit
      *
      * @param null $limit
-     * @return mixed|void
-     * @throws ActivityLogException
+     * @return mixed|null
      */
-    public function getLatestLoginLogs($limit = null) {
-        throw new ActivityLogException('Not able to get logs from file');
-    }
+    protected function setLimit($limit = null)
+    {
+        if (!$limit) {
+            $limit = config('login-activity.number_of_getLatest_logs', 100);
+        }
 
-    /**
-     * Get logout logs
-     * @throws ActivityLogException
-     */
-    public function getLogoutLogs() {
-        throw new ActivityLogException('Not able to get logs from file');
-    }
-
-    /**
-     * Get getLatest logout logs
-     *
-     * @param null $limit
-     * @return mixed|void
-     * @throws ActivityLogException
-     */
-    public function getLatestLogoutLogs($limit = null) {
-        throw new ActivityLogException('Not able to get logs from file');
+        return $limit;
     }
 }

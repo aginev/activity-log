@@ -2,9 +2,7 @@
 
 namespace Aginev\ActivityLog\Handlers;
 
-use Carbon\Carbon;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Aginev\ActivityLog\Models\UserActivity;
 
@@ -12,27 +10,36 @@ class EloquentHandler implements ActivityLogInterface
 {
 
     /**
-     * Log login event
+     * Triggered when model is created
      *
-     * @param Login $login
+     * @param $model
      * @return mixed
      */
-    public function login(Login $login)
+    public function created($model)
     {
-        $this->createActivity($login->user->id, __FUNCTION__, $login->remember);
+        $this->log($model, __FUNCTION__);
     }
 
     /**
-     * Log logout event
+     * Triggered when model is updated
      *
-     * @param Logout $logout
+     * @param $model
      * @return mixed
      */
-    public function logout(Logout $logout)
+    public function updated($model)
     {
-        if ($logout->user) {
-            $this->createActivity($logout->user->id, __FUNCTION__);
-        }
+        $this->log($model, __FUNCTION__);
+    }
+
+    /**
+     * Triggered when model is deleted
+     *
+     * @param $model
+     * @return mixed
+     */
+    public function deleted($model)
+    {
+        $this->log($model, __FUNCTION__);
     }
 
     /**
@@ -42,22 +49,19 @@ class EloquentHandler implements ActivityLogInterface
      *
      * @return bool
      */
-    public function cleanLog($offset = 30)
+    public function cleanLog($offset)
     {
-        $past = Carbon::now()->subDays($offset);
-
-        UserActivity::where('created_at', '<=', $past)->delete();
-
-        return true;
+        // TODO: Implement cleanLog() method.
     }
 
     /**
      * Get all logs
      *
-     * @return UserActivityLog
+     * @return mixed
      */
-    public function getLogs() {
-        return new UserActivity();
+    public function getActivities()
+    {
+        // TODO: Implement getActivities() method.
     }
 
     /**
@@ -66,67 +70,9 @@ class EloquentHandler implements ActivityLogInterface
      * @param null $limit
      * @return mixed
      */
-    public function getLatestLogs($limit = null) {
-        return UserActivity::take($this->setLimit($limit))->get();
-    }
-
-
-    /**
-     * Get login logs
-     *
-     * @return mixed
-     */
-    public function getLoginLogs() {
-        return UserActivity::where('event', '=', 'login');
-    }
-
-    /**
-     * Get getLatest login logs
-     *
-     * @param null $limit
-     * @return mixed
-     */
-    public function getLatestLoginLogs($limit = null) {
-        return UserActivity::where('event', '=', 'login')->take($this->setLimit($limit))->get();
-    }
-
-    /**
-     * Get logout logs
-     *
-     * @return mixed
-     */
-    public function getLogoutLogs() {
-        return UserActivity::where('event', '=', 'logout');
-    }
-
-    /**
-     * Get getLatest logout logs
-     *
-     * @param null $limit
-     * @return mixed
-     */
-    public function getLatestLogoutLogs($limit = null) {
-        return UserActivity::where('event', '=', 'logout')->take($this->setLimit($limit))->get();
-    }
-
-    /**
-     * Create user login activity
-     *
-     * @param $user_id
-     * @param $event_name
-     * @param bool $remember
-     * @return UserActivityLog
-     */
-    protected function createActivity($user_id, $event_name, $remember = false)
+    public function getLatestActivities($limit = null)
     {
-        $activity = new UserActivity();
-        $activity->user_id = $user_id;
-        $activity->remember = $remember;
-        $activity->ip_address = Request::ip();
-        $activity->event = $event_name;
-        $activity->save();
-
-        return $activity;
+        // TODO: Implement getLatestActivities() method.
     }
 
     /**
@@ -135,11 +81,28 @@ class EloquentHandler implements ActivityLogInterface
      * @param null $limit
      * @return mixed|null
      */
-    protected function setLimit($limit = null) {
+    protected function setLimit($limit = null)
+    {
         if (!$limit) {
             $limit = config('login-activity.number_of_getLatest_logs', 100);
         }
 
         return $limit;
+    }
+
+    private function log($model, $event)
+    {
+        $attributes = $model->getAttributes();
+        $original = $model->getOriginal();
+
+        $activity = new UserActivity([
+            'user_id'    => Auth::user() ? Auth::user()->id : null,
+            'ip_address' => Request::ip(),
+            'event'      => $event,
+            'before'     => $attributes ? json_encode($attributes) : null,
+            'after'      => $original ? json_encode($original) : null,
+        ]);
+
+        $model->activities()->save($activity);
     }
 }

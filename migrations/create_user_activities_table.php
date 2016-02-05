@@ -18,8 +18,8 @@ class CreateUserActivitiesTable extends Migration
             $table->integer('user_id')->unsigned()->nullable()->default(null);
             $table->string('ip_address', 64);
 
-            $table->integer('loggable_id')->unsigned()->nullable()->default(null);
-            $table->string('loggable_type');
+            $table->integer('observable_id')->unsigned()->nullable()->default(null);
+            $table->string('observable_type');
 
             $table->text('before')->nullable()->default(null);
             $table->text('after')->nullable()->default(null);
