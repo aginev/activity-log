@@ -2,6 +2,7 @@
 
 namespace Aginev\ActivityLog\Handlers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Aginev\ActivityLog\Models\UserActivity;
