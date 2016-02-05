@@ -19,4 +19,13 @@ trait ObservableModel {
     {
         return $this->morphMany(UserActivity::class, 'observable');
     }
+
+    /**
+     * Implement this method to set custom activity description message
+     */
+    public function activityDescription($event, $user) {
+        $description = '';
+
+        return $description;
+    }
 }

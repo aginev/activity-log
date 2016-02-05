@@ -96,11 +96,12 @@ class EloquentHandler implements ActivityLogInterface
         $original = $model->getOriginal();
 
         $activity = new UserActivity([
-            'user_id'    => Auth::user() ? Auth::user()->id : null,
-            'ip_address' => Request::ip(),
-            'event'      => $event,
-            'before'     => $attributes ? json_encode($attributes) : null,
-            'after'      => $original ? json_encode($original) : null,
+            'user_id'     => Auth::user() ? Auth::user()->id : null,
+            'ip_address'  => Request::ip(),
+            'event'       => $event,
+            'before'      => $attributes ? json_encode($attributes) : null,
+            'after'       => $original ? json_encode($original) : null,
+            'description' => $model->activityDescription($event, Auth::user() ? Auth::user() : null),
         ]);
 
         $model->activities()->save($activity);
