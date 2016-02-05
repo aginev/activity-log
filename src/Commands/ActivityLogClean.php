@@ -37,7 +37,7 @@ class ActivityLogClean extends Command
     public function handle()
     {
         $days = (int)$this->argument('days');
-        $days = $days ?: 30;
+        $days = isset($days) ? $days : 30;
 
         ActivityLogFacade::cleanLog($days);
 
