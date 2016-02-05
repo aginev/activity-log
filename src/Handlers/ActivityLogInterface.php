@@ -55,4 +55,13 @@ interface ActivityLogInterface
      * @return mixed
      */
     public function getLatestActivities($limit = null);
+
+    /**
+     * Log event
+     *
+     * @param $model
+     * @param $event
+     * @return mixed
+     */
+    public function log($model, $event);
 }

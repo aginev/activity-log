@@ -2,87 +2,71 @@
 
 namespace Aginev\ActivityLog\Handlers;
 
-class LogHandler implements ActivityLogInterface
+use Aginev\ActivityLog\Exceptions\ActivityLogException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
+
+class LogHandler extends HandlerAbstract
 {
 
     /**
-     * Triggered when model is created
+     * Clear logs
      *
-     * @param $model
-     * @return mixed
-     */
-    public function created($model)
-    {
-        // TODO: Implement created() method.
-    }
-
-    /**
-     * Triggered when model is updated
-     *
-     * @param $model
-     * @return mixed
-     */
-    public function updated($model)
-    {
-        // TODO: Implement updated() method.
-    }
-
-    /**
-     * Triggered when model is deleted
-     *
-     * @param $model
-     * @return mixed
-     */
-    public function deleted($model)
-    {
-        // TODO: Implement deleted() method.
-    }
-
-    /**
-     * Clean old logs.
-     *
-     * @param int $offset Offset in days
-     *
-     * @return bool
+     * @param int $offset
+     * @return bool|void
+     * @throws ActivityLogException
      */
     public function cleanLog($offset)
     {
-        // TODO: Implement cleanLog() method.
+        throw new ActivityLogException('Not able to get logs from file');
     }
 
     /**
      * Get all logs
      *
-     * @return mixed
+     * @throws ActivityLogException
      */
     public function getActivities()
     {
-        // TODO: Implement getActivities() method.
+        throw new ActivityLogException('Not able to get logs from file');
     }
 
     /**
      * Get getLatest logs
      *
      * @param null $limit
-     * @return mixed
+     * @throws ActivityLogException
+     * @return void
      */
     public function getLatestActivities($limit = null)
     {
-        // TODO: Implement getLatestActivities() method.
+        throw new ActivityLogException('Not able to get logs from file');
     }
 
     /**
-     * Setup logs query limit
+     * Log event
      *
-     * @param null $limit
-     * @return mixed|null
+     * @param $model
+     * @param $event
+     * @return mixed
      */
-    protected function setLimit($limit = null)
+    public function log($model, $event)
     {
-        if (!$limit) {
-            $limit = config('login-activity.number_of_getLatest_logs', 100);
-        }
+        $attributes = $model->getAttributes();
+        $original = $model->getOriginal();
 
-        return $limit;
+        $activity = [
+            'user_id'     => Auth::user() ? Auth::user()->id : null,
+            'ip_address'  => Request::ip(),
+            'event'       => $event,
+            'before'      => $event == 'deleted' ? json_encode($attributes) : json_encode(array_diff_assoc($original, $attributes)),
+            'after'       => json_encode(array_diff_assoc($attributes, $original)),
+            'description' => $model->activityDescription($event, Auth::user() ? Auth::user() : null),
+        ];
+
+        Log::info('[' . strtoupper($event) . ']', $activity);
+
+        return true;
     }
 }

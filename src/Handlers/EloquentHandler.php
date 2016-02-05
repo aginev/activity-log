@@ -49,8 +49,9 @@ class EloquentHandler extends HandlerAbstract
     /**
      * @param $model
      * @param $event
+     * @return mixed|void
      */
-    protected function log($model, $event)
+    public function log($model, $event)
     {
         $attributes = $model->getAttributes();
         $original = $model->getOriginal();
