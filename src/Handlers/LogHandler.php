@@ -6,6 +6,7 @@ use Aginev\ActivityLog\Exceptions\ActivityLogException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
+use Carbon\Carbon;
 
 class LogHandler extends HandlerAbstract
 {
@@ -63,6 +64,7 @@ class LogHandler extends HandlerAbstract
             'before'      => $event == 'deleted' ? json_encode($attributes) : json_encode(array_diff_assoc($original, $attributes)),
             'after'       => json_encode(array_diff_assoc($attributes, $original)),
             'description' => $model->activityDescription($event, Auth::user() ? Auth::user() : null),
+            'created_at'  => Carbon::now()
         ];
 
         Log::info('[' . strtoupper($event) . ']', $activity);

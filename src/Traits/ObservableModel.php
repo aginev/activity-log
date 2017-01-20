@@ -30,4 +30,11 @@ trait ObservableModel {
     public function activityDescription($event, User $user = null) {
         return '';
     }
+
+    /**
+     * @return mixed
+     */
+    public function observable() {
+        return $this->belongsTo($this->observable_type,'observable_id','id');
+    }
 }

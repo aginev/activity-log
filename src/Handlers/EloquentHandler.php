@@ -64,6 +64,7 @@ class EloquentHandler extends HandlerAbstract
             'before'      => $event == 'deleted' ? json_encode($attributes) : json_encode(array_diff_assoc($original, $attributes)),
             'after'       => json_encode(array_diff_assoc($attributes, $original)),
             'description' => $model->activityDescription($event, Auth::user() ? Auth::user() : null),
+            'created_at'  => Carbon::now()
         ]);
 
         $model->activities()->save($activity);
